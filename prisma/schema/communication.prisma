@@ -1,0 +1,115 @@
+model Conversation {
+  id               String                    @id @default(cuid())
+  applicationId    String?
+  ecoApplicationId String?
+  title            String?
+  type             ConversationType          @default(GENERAL)
+  status           ConversationStatus        @default(OPEN)
+  createdAt        DateTime                  @default(now())
+  updatedAt        DateTime                  @updatedAt
+  application      Application?              @relation(fields: [applicationId], references: [id], onDelete: Cascade)
+  ecoApplication   EcoApplication?           @relation(fields: [ecoApplicationId], references: [id], onDelete: Cascade)
+  participants     ConversationParticipant[]
+  messages         Message[]
+
+  @@index([applicationId])
+  @@index([ecoApplicationId])
+  @@index([type])
+  @@schema("communication")
+}
+
+model ConversationParticipant {
+  id             String          @id @default(cuid())
+  conversationId String
+  userId         String
+  role           ParticipantRole @default(MEMBER)
+  hasUnread      Boolean         @default(false)
+  isArchived     Boolean         @default(false)
+  isMuted        Boolean         @default(false)
+  lastReadAt     DateTime?
+  createdAt      DateTime        @default(now())
+  updatedAt      DateTime        @updatedAt
+  conversation   Conversation    @relation(fields: [conversationId], references: [id], onDelete: Cascade)
+  user           User            @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([conversationId, userId])
+  @@index([userId])
+  @@index([conversationId])
+  @@index([updatedAt])
+  @@schema("communication")
+}
+
+model Message {
+  id             String              @id @default(cuid())
+  conversationId String
+  senderId       String?
+  content        String
+  messageType    MessageType         @default(TEXT)
+  status         MessageStatus       @default(SENT)
+  createdAt      DateTime            @default(now())
+  updatedAt      DateTime            @updatedAt
+  conversation   Conversation        @relation(fields: [conversationId], references: [id], onDelete: Cascade)
+  sender         User?               @relation(fields: [senderId], references: [id])
+  attachments    MessageAttachment[]
+
+  @@index([conversationId])
+  @@index([senderId])
+  @@index([createdAt])
+  @@index([updatedAt])
+  @@schema("communication")
+}
+
+model MessageAttachment {
+  id        String   @id @default(cuid())
+  messageId String
+  fileId    String
+  createdAt DateTime @default(now())
+  file      File     @relation(fields: [fileId], references: [id], onDelete: Cascade)
+  message   Message  @relation(fields: [messageId], references: [id], onDelete: Cascade)
+
+  @@index([messageId])
+  @@index([fileId])
+  @@schema("communication")
+}
+
+enum ConversationType {
+  GENERAL
+  CLARIFICATION
+  EVALUATION
+  SYSTEM_BROADCAST
+  DIRECT_MESSAGE
+
+  @@schema("communication")
+}
+
+enum ConversationStatus {
+  OPEN
+  RESOLVED
+  CLOSED
+
+  @@schema("communication")
+}
+
+enum ParticipantRole {
+  OWNER
+  MEMBER
+  OBSERVER
+
+  @@schema("communication")
+}
+
+enum MessageType {
+  TEXT
+  DOCUMENT_REQUEST
+  SYSTEM_ALERT
+
+  @@schema("communication")
+}
+
+enum MessageStatus {
+  SENT
+  DELIVERED
+  READ
+
+  @@schema("communication")
+}

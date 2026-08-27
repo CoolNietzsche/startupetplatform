@@ -1,0 +1,81 @@
+model Committee {
+  id                String                           @id @default(cuid())
+  name              String                           @unique
+  description       String?
+  entityType        CommitteeEntityType
+  requiredApprovals Int                              @default(1)
+  status            CommitteeStatus                  @default(ACTIVE)
+  passThreshold     Int?
+  directivePreset   String?
+  createdAt         DateTime                         @default(now())
+  updatedAt         DateTime                         @updatedAt
+  assignments       ApplicationCommitteeAssignment[] @relation("CommitteeAssignments")
+  evaluations       ApplicationEvaluation[]          @relation("CommitteeEvaluations")
+  criteria          CommitteeCriterion[]
+  members           CommitteeMember[]
+  ecoAssignments    EcoCommitteeAssignment[]         @relation("EcoCommitteeAssignments")
+
+  @@index([entityType])
+  @@index([status])
+  @@schema("committee")
+}
+
+model CommitteeMember {
+  id                          String                           @id @default(cuid())
+  committeeId                 String
+  userId                      String
+  memberRole                  CommitteeMemberRole              @default(MEMBER)
+  addedAt                     DateTime                         @default(now())
+  removedAt                   DateTime?
+  applicationChairAssignments ApplicationCommitteeAssignment[] @relation("ApplicationAssignmentChairMembers")
+  committee                   Committee                        @relation(fields: [committeeId], references: [id], onDelete: Cascade)
+  user                        User                             @relation(fields: [userId], references: [id], onDelete: Cascade)
+  ecoChairAssignments         EcoCommitteeAssignment[]         @relation("EcoAssignmentChairMembers")
+  ecoDecisions                EcoCommitteeDecision[]           @relation("EcoDecisionChair")
+  ecoReviews                  EcoCommitteeReview[]             @relation("EcoReviewMember")
+
+  @@unique([committeeId, userId])
+  @@index([committeeId])
+  @@index([userId])
+  @@schema("committee")
+}
+
+model CommitteeCriterion {
+  id              String                       @id @default(cuid())
+  committeeId     String
+  name            String
+  description     String?
+  weight          Int
+  directivePreset String?
+  directiveRef    String?
+  createdAt       DateTime                     @default(now())
+  updatedAt       DateTime                     @updatedAt
+  scores          ApplicationEvaluationScore[] @relation("CriterionScores")
+  committee       Committee                    @relation(fields: [committeeId], references: [id], onDelete: Cascade)
+  ecoScores       EcoCommitteeReviewScore[]    @relation("EcoCriterionScores")
+
+  @@unique([committeeId, name])
+  @@index([committeeId])
+  @@schema("committee")
+}
+
+enum CommitteeEntityType {
+  STARTUP
+  ECOSYSTEM
+
+  @@schema("committee")
+}
+
+enum CommitteeStatus {
+  ACTIVE
+  INACTIVE
+
+  @@schema("committee")
+}
+
+enum CommitteeMemberRole {
+  CHAIR
+  MEMBER
+
+  @@schema("committee")
+}

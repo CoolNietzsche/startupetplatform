@@ -1,0 +1,152 @@
+model Hub {
+  id          String   @id @default(cuid())
+  name        String   @unique
+  region      String
+  description String?
+  logoUrl     String?
+  primaryColor String? @default("#2563eb")
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  startups          Startup[]
+  incubationPrograms IncubationProgram[]
+  mentorAssignments MentorAssignment[]
+  managedBy          User?              @relation("HubManager")
+  hubReports         HubReport[]
+  assets             Asset[]
+  members            User[]             @relation("HubMembers")
+
+  @@schema("incubation")
+}
+
+model IncubationProgram {
+  id              String   @id @default(cuid())
+  hubId           String
+  name            String
+  description     String?
+  startDate       DateTime?
+  endDate         DateTime?
+  capacity        Int?
+  assignedTrainer String?
+  status          String   @default("ACTIVE")
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+
+  hub              Hub                @relation(fields: [hubId], references: [id])
+  mentorAssignments MentorAssignment[]
+  progress         IncubationProgress[]
+
+  @@schema("incubation")
+}
+
+model MentorAssignment {
+  id          String   @id @default(cuid())
+  hubId       String
+  programId   String?
+  mentorId    String   @default("")
+  mentorName  String
+  mentorEmail String?
+  startupId   String?
+  focusArea   String?
+  status      String   @default("ACTIVE")
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  hub      Hub                @relation(fields: [hubId], references: [id])
+  program  IncubationProgram? @relation(fields: [programId], references: [id])
+  mentor   User?              @relation(fields: [mentorId], references: [id])
+
+  @@schema("incubation")
+}
+
+model IncubationProgress {
+  id        String   @id @default(cuid())
+  programId String
+  startupId String
+  stage     String   @default("ONBOARDING")
+  progress  Float    @default(0)
+  notes     String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  program IncubationProgram @relation(fields: [programId], references: [id])
+
+  @@schema("incubation")
+}
+
+model Asset {
+  id          String   @id @default(cuid())
+  hubId       String
+  name        String
+  type        String
+  description String?
+  quantity    Int      @default(1)
+  status      String   @default("AVAILABLE")
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  hub      Hub            @relation(fields: [hubId], references: [id])
+  bookings AssetBooking[]
+
+  @@index([hubId])
+  @@index([status])
+  @@schema("incubation")
+}
+
+model AssetBooking {
+  id        String   @id @default(cuid())
+  assetId   String
+  startupId String
+  startDate DateTime
+  endDate   DateTime
+  status    String   @default("PENDING")
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  asset   Asset   @relation(fields: [assetId], references: [id])
+  startup Startup @relation(fields: [startupId], references: [id])
+
+  @@index([assetId])
+  @@index([startupId])
+  @@index([status])
+  @@schema("incubation")
+}
+
+model MentorMatchRequest {
+  id        String   @id @default(cuid())
+  startupId String
+  mentorId  String?
+  mentorName String?
+  message   String?
+  status    String   @default("PENDING")
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  startup Startup @relation(fields: [startupId], references: [id])
+  mentor  User?   @relation(fields: [mentorId], references: [id])
+
+  @@index([startupId])
+  @@index([mentorId])
+  @@index([status])
+  @@schema("incubation")
+}
+
+model MentorSession {
+  id           String   @id @default(cuid())
+  mentorId     String
+  startupId    String
+  date         DateTime
+  duration     Int
+  topicsCovered String
+  outcomes     String
+  nextSteps    String?
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+
+  mentor User    @relation(fields: [mentorId], references: [id])
+  startup Startup @relation(fields: [startupId], references: [id])
+
+  @@index([mentorId])
+  @@index([startupId])
+  @@schema("incubation")
+}

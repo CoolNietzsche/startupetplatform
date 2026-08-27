@@ -1,0 +1,35 @@
+model AuditLog {
+  id        String   @id @default(cuid())
+  userId    String?
+  user      User?    @relation(fields: [userId], references: [id])
+  email     String?
+  action    String
+  resource  String?
+  details   Json?
+  ipAddress String?
+  userAgent String?
+  retentionUntil DateTime?
+  createdAt DateTime @default(now())
+
+  @@index([userId])
+  @@index([action])
+  @@index([createdAt])
+  @@index([retentionUntil])
+  @@schema("audit")
+}
+
+model ExportLog {
+  id         String   @id @default(cuid())
+  userId     String
+  format     String
+  filters    Json?
+  recordCount Int?
+  filePath   String?
+  createdAt  DateTime @default(now())
+
+  user User @relation(fields: [userId], references: [id])
+
+  @@index([userId])
+  @@index([createdAt])
+  @@schema("audit")
+}

@@ -1,0 +1,93 @@
+model Complaint {
+  id               String             @id @default(cuid())
+  userId           String?            @map("user_id")
+  submitterEmail   String?            @map("submitter_email")
+  submitterName    String?            @map("submitter_name")
+  submitterPhone   String?            @map("submitter_phone")
+  submitterIp      String?            @map("submitter_ip")
+  category         ComplaintCategory  @default(GENERAL)
+  type             ComplaintType      @default(PUBLIC)
+  startupTargetId  String?            @map("startup_target_id")
+  builderTargetId  String?            @map("builder_target_id")
+  applicationId    String?            @map("application_id")
+  ecoApplicationId String?            @map("eco_application_id")
+  title            String
+  description      String
+  fileId           String?            @map("file_id")
+  status           ComplaintStatus    @default(PENDING)
+  actionTaken      AdminResolution    @default(NONE) @map("action_taken")
+  assignedToId     String?            @map("assigned_to_id")
+  resolutionNotes  String?            @map("resolution_notes")
+  trackingCode     String             @unique @default(cuid()) @map("tracking_code")
+  createdAt        DateTime           @default(now()) @map("created_at")
+  updatedAt        DateTime           @updatedAt @map("updated_at")
+  application      Application?       @relation("ApplicationComplaints", fields: [applicationId], references: [id])
+  assignedTo       User?              @relation("AdminAssignedComplaints", fields: [assignedToId], references: [id])
+  builderTarget    EcosystemBuilder?  @relation("BuilderTargetComplaints", fields: [builderTargetId], references: [id])
+  ecoApplication   EcoApplication?    @relation("EcoApplicationComplaints", fields: [ecoApplicationId], references: [id])
+  attachment       File?              @relation("ComplaintAttachment", fields: [fileId], references: [id])
+  startupTarget    Startup?           @relation("StartupTargetComplaints", fields: [startupTargetId], references: [id])
+  user             User?              @relation("UserComplaints", fields: [userId], references: [id])
+  history          ComplaintHistory[]
+
+  @@unique([submitterEmail, startupTargetId])
+  @@unique([submitterEmail, builderTargetId])
+  @@index([status])
+  @@index([type])
+  @@index([userId])
+  @@index([startupTargetId])
+  @@index([builderTargetId])
+  @@index([trackingCode])
+  @@schema("complaint")
+}
+
+model ComplaintHistory {
+  id          String    @id @default(cuid())
+  complaintId String    @map("complaint_id")
+  userId      String?   @map("user_id")
+  action      String
+  oldStatus   String?   @map("old_status")
+  newStatus   String?   @map("new_status")
+  note        String?
+  createdAt   DateTime  @default(now()) @map("created_at")
+  complaint   Complaint @relation(fields: [complaintId], references: [id], onDelete: Cascade)
+  user        User?     @relation("ComplaintActionLogs", fields: [userId], references: [id])
+
+  @@schema("complaint")
+}
+
+enum ComplaintStatus {
+  PENDING
+  IN_REVIEW
+  RESOLVED
+  REJECTED
+
+  @@schema("complaint")
+}
+
+enum ComplaintType {
+  PUBLIC
+  STARTUP
+  ECOSYSTEM_BUILDER
+
+  @@schema("complaint")
+}
+
+enum ComplaintCategory {
+  STARTUP
+  ECOSYSTEM_BUILDER
+  PROCESS
+  GENERAL
+
+  @@schema("complaint")
+}
+
+enum AdminResolution {
+  NONE
+  WARNING
+  SUSPENSION
+  LICENSE_REVOKED
+  RESOLVED_NO_ACTION
+
+  @@schema("complaint")
+}

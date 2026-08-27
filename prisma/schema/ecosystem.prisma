@@ -1,0 +1,237 @@
+model EcosystemBuilder {
+  id                    String               @id @default(cuid())
+  userId                String?              @unique
+  name                  String
+  type                  String
+  location              String
+  region                String
+  established           Int?
+  capacity              Int?
+  website               String?
+  certified             Boolean              @default(false)
+  reviewed              Boolean              @default(false)
+  services              Json
+  description           String?
+  address               String?
+  city                  String?
+  contactName           String?
+  contactEmail          String?
+  contactPhone          String?
+  serviceDescription    String?
+  impactDescription     String?
+  businessLicenseFileId String?
+  taxRegistrationFileId String?
+  deletedAt             DateTime?
+  createdAt             DateTime             @default(now())
+  updatedAt             DateTime             @updatedAt
+  complaintsReceived    Complaint[]          @relation("BuilderTargetComplaints")
+  ecoApplications       EcoApplication[]
+  businessLicenseFile   File?                @relation("EcosystemBuilderBusinessLicenseFile", fields: [businessLicenseFileId], references: [id])
+  taxRegistrationFile   File?                @relation("EcosystemBuilderTaxRegistrationFile", fields: [taxRegistrationFileId], references: [id])
+  user                  User?                @relation(fields: [userId], references: [id])
+  createdOpportunities  FundingOpportunity[] @relation("BuilderCreatedOpportunities")
+  investor              Investor?            @relation("BuilderInvestor")
+
+  @@index([name])
+  @@index([type])
+  @@index([location])
+  @@index([region])
+  @@index([certified])
+  @@index([deletedAt])
+  @@schema("ecosystem")
+}
+
+model EcoApplication {
+  id                    String                        @id @default(cuid())
+  builderId             String
+  reviewerId            String?
+  status                EcoApplicationStatus          @default(DRAFT)
+  editingLocked         Boolean                       @default(false)
+  submittedAt           DateTime?
+  validatedAt           DateTime?
+  rejectedReason        String?
+  rollbackReason        String?
+  certificateId         String?
+  name                  String
+  type                  String
+  location              String
+  region                String
+  website               String?
+  services              Json
+  description           String?
+  address               String?
+  city                  String?
+  contactName           String?
+  contactEmail          String?
+  contactPhone          String?
+  serviceDescription    String?
+  impactDescription     String?
+  established           Int?
+  capacity              Int?
+  businessLicenseFileId String?
+  taxRegistrationFileId String?
+  documentVerification   Json?
+  preAssessedAt          DateTime?
+  preAssessedById        String?
+  createdAt             DateTime                      @default(now())
+  updatedAt             DateTime                      @updatedAt
+  certificate           Certificate?                  @relation("EcoApplicationToCertificate")
+  conversations         Conversation[]
+  complaints            Complaint[]                   @relation("EcoApplicationComplaints")
+  builder               EcosystemBuilder              @relation(fields: [builderId], references: [id], onDelete: Cascade)
+  reviewer              User?                         @relation("EcoApplicationReviewer", fields: [reviewerId], references: [id])
+  statusHistory         EcoApplicationStatusHistory[]
+  assignments           EcoCommitteeAssignment[]
+  reviews               EcoCommitteeReview[]          @relation("EcoApplicationReviews")
+
+  @@index([builderId])
+  @@index([status])
+  @@index([reviewerId])
+  @@schema("ecosystem")
+}
+
+model EcoApplicationStatusHistory {
+  id               String                @id @default(cuid())
+  ecoApplicationId String
+  fromStatus       EcoApplicationStatus?
+  toStatus         EcoApplicationStatus
+  changedById      String
+  reason           String?
+  createdAt        DateTime              @default(now())
+  changedBy        User                  @relation("EcoStatusChangedBy", fields: [changedById], references: [id], onDelete: SetNull)
+  ecoApplication   EcoApplication        @relation(fields: [ecoApplicationId], references: [id], onDelete: Cascade)
+
+  @@index([ecoApplicationId])
+  @@index([changedById])
+  @@schema("ecosystem")
+}
+
+model EcoCommitteeAssignment {
+  id               String                @id @default(cuid())
+  ecoApplicationId String
+  committeeId      String
+  assignedById     String
+  chairMemberId    String?
+  active           Boolean               @default(true)
+  createdAt        DateTime              @default(now())
+  updatedAt        DateTime              @updatedAt
+  assignedBy       User                  @relation("EcoAssignmentAssignedBy", fields: [assignedById], references: [id], onDelete: SetNull)
+  chairMember      CommitteeMember?      @relation("EcoAssignmentChairMembers", fields: [chairMemberId], references: [id])
+  committee        Committee             @relation("EcoCommitteeAssignments", fields: [committeeId], references: [id], onDelete: Cascade)
+  ecoApplication   EcoApplication        @relation(fields: [ecoApplicationId], references: [id], onDelete: Cascade)
+  decision         EcoCommitteeDecision?
+  memberReviews    EcoCommitteeReview[]
+
+  @@unique([ecoApplicationId, committeeId])
+  @@index([committeeId])
+  @@index([assignedById])
+  @@schema("ecosystem")
+}
+
+model EcoCommitteeReview {
+  id               String                    @id @default(cuid())
+  ecoApplicationId String
+  assignmentId     String
+  memberId         String
+  status           EcoReviewStatus           @default(DRAFT)
+  recommendation   EcoReviewRecommendation?
+  comment          String?
+  submittedAt      DateTime?
+  createdAt        DateTime                  @default(now())
+  updatedAt        DateTime                  @updatedAt
+  assignment       EcoCommitteeAssignment    @relation(fields: [assignmentId], references: [id], onDelete: Cascade)
+  ecoApplication   EcoApplication            @relation("EcoApplicationReviews", fields: [ecoApplicationId], references: [id], onDelete: Cascade)
+  member           CommitteeMember           @relation("EcoReviewMember", fields: [memberId], references: [id], onDelete: Cascade)
+  scores           EcoCommitteeReviewScore[]
+
+  @@unique([assignmentId, memberId])
+  @@index([memberId])
+  @@index([ecoApplicationId])
+  @@schema("ecosystem")
+}
+
+model EcoCommitteeReviewScore {
+  id             String                   @id @default(cuid())
+  reviewId       String
+  criterionId    String
+  score          Int
+  weightSnapshot Int
+  recommendation EcoReviewRecommendation?
+  comment        String?
+  createdAt      DateTime                 @default(now())
+  updatedAt      DateTime                 @updatedAt
+  criterion      CommitteeCriterion       @relation("EcoCriterionScores", fields: [criterionId], references: [id], onDelete: Cascade)
+  review         EcoCommitteeReview       @relation(fields: [reviewId], references: [id], onDelete: Cascade)
+
+  @@unique([reviewId, criterionId])
+  @@index([criterionId])
+  @@schema("ecosystem")
+}
+
+model EcoCommitteeDecision {
+  id            String                 @id @default(cuid())
+  assignmentId  String                 @unique
+  chairMemberId String
+  summary       String
+  finalDecision String
+  submittedAt   DateTime               @default(now())
+  assignment    EcoCommitteeAssignment @relation(fields: [assignmentId], references: [id], onDelete: Cascade)
+  chairMember   CommitteeMember        @relation("EcoDecisionChair", fields: [chairMemberId], references: [id], onDelete: Cascade)
+
+  @@index([chairMemberId])
+  @@schema("ecosystem")
+}
+
+model Stakeholder {
+  id           String   @id @default(cuid())
+  name         String
+  type         String
+  description  String?
+  website      String?
+  email        String?
+  phone        String?
+  address      String?
+  region       String?
+  status       String   @default("pending")
+  portalAccess Boolean  @default(false)
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+  admins       User[]   @relation("StakeholderToAdmins")
+  formalRequests FormalRequest[] @relation("StakeholderFormalRequests")
+
+  @@schema("ecosystem")
+}
+
+enum EcoReviewStatus {
+  DRAFT
+  SUBMITTED
+
+  @@schema("ecosystem")
+}
+
+enum EcoReviewRecommendation {
+  APPROVE
+  REJECT
+  MORE_INFO
+
+  @@schema("ecosystem")
+}
+
+enum EcoApplicationStatus {
+  DRAFT
+  PENDING
+  UNDER_REVIEW
+  REVIEWED
+  ASSIGNED_TO_COMMITTEE
+  IN_COMMITTEE_REVIEW
+  COMMITTEE_REVIEW_SUBMITTED
+  CERTIFIED
+  REJECTED
+  CLARIFICATION_REQUESTED
+  PAUSED
+  EXPIRED
+  SUSPENDED
+  REVOKED
+
+  @@schema("ecosystem")
+}

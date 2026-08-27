@@ -1,0 +1,20 @@
+model News {
+  id                  String    @id @default(cuid())
+  title               String
+  slug                String    @unique
+  excerpt             String
+  content             String
+  category            String
+  author              String
+  featuredImageFileId String?
+  status              String    @default("draft")
+  publishedDate       DateTime?
+  views               Int       @default(0)
+  createdAt           DateTime  @default(now())
+  updatedAt           DateTime  @updatedAt
+  images              File[]    @relation("NewsImages")
+  featuredImageFile   File?     @relation("NewsFeaturedImage", fields: [featuredImageFileId], references: [id])
+
+  @@map("news")
+  @@schema("news")
+}

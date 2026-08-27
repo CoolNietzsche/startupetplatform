@@ -1,0 +1,67 @@
+# See https://help.github.com/articles/ignoring-files/ for more about ignoring files.
+
+# ops runbook — contains live server/DB credentials, never commit
+/OPERATIONS.md
+
+# dependencies
+/node_modules
+/.pnp
+.pnp.*
+.yarn/*
+!.yarn/patches
+!.yarn/plugins
+!.yarn/releases
+!.yarn/versions
+
+# testing
+/coverage
+
+# next.js
+/.next/
+/out/
+
+# production
+/build
+
+# misc
+.DS_Store
+*.pem
+
+# debug
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# env files (opt-in for committing as requested)
+.env
+
+# local file storage
+/storage/
+
+# user uploads (avatars, etc)
+/public/uploads/
+/public/avatar-*
+
+# vercel
+.vercel
+
+# typescript
+*.tsbuildinfo
+next-env.d.ts
+landing-static/
+tmp/
+audit_results.json
+audit_utf8.json
+build_output.txt
+*.env.bak-*
+docker-compose.yml.bak-*
+.env
+.env.bak-*
+.env.bak2-*
+BinEx.ipynb
+.ipynb_checkpoints/
+public/api/*/certificates/
+public/certs/
+scripts/archive/
+scratch/
+*.log

@@ -1,0 +1,53 @@
+.featuredImageBg {
+  background-position: center;
+  background-size: cover;
+  transition: transform 0.5s;
+  background-image: var(--bg-image-url);
+}
+
+.featuredImageBg:hover {
+  transform: scale(1.05);
+}
+
+.newsItemImageBg {
+  width: 100%;
+  height: 100%;
+  background-position: center;
+  background-size: cover;
+  transition: transform 0.5s;
+  background-image: var(--bg-image-url);
+}
+
+.newsItemGroup:hover .newsItemImageBg {
+  transform: scale(1.05);
+}
+
+/* Government initiatives background images */
+.initiativeImage1 {
+  --bg-image-url: url('https://images.unsplash.com/photo-1554224155-6726b3ff858f?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=80');
+}
+
+.initiativeImage2 {
+  --bg-image-url: url('https://images.unsplash.com/photo-1579621970795-87facc2f976d?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=80');
+}
+
+.initiativeImage3 {
+  --bg-image-url: url('https://images.unsplash.com/photo-1497215728101-856f4ea42174?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=80');
+}
+
+.initiativeImage4 {
+  --bg-image-url: url('https://images.unsplash.com/photo-1559136560-16ad036d85d3?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=80');
+}
+
+/* Jobs section background images */
+.jobImage1 {
+  --bg-image-url: url('https://images.unsplash.com/photo-1573495627361-d9b87960b12d?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=80');
+}
+
+.jobImage2 {
+  --bg-image-url: url('https://images.unsplash.com/photo-1596720426673-e4e14290f0cc?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=80');
+}
+
+.jobImage3 {
+  --bg-image-url: url('https://images.unsplash.com/photo-1606857521015-7f9fcf423740?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=80');
+}

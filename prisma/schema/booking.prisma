@@ -1,0 +1,39 @@
+model Space {
+  id           String    @id @default(cuid())
+  name         String
+  type         String
+  capacity     Int
+  pricePerHour Float
+  location     String
+  description  String?
+  amenities    String
+  status       String    @default("available")
+  image        String?
+  createdAt    DateTime  @default(now())
+  updatedAt    DateTime  @updatedAt
+  bookings     Booking[]
+
+  @@map("spaces")
+  @@schema("booking")
+}
+
+model Booking {
+  id          String   @id @default(cuid())
+  spaceId     String
+  clientName  String
+  clientEmail String
+  clientPhone String
+  date        String
+  startTime   String
+  endTime     String
+  duration    Float
+  totalCost   Float
+  purpose     String
+  status      String   @default("pending")
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  space       Space    @relation(fields: [spaceId], references: [id])
+
+  @@map("bookings")
+  @@schema("booking")
+}

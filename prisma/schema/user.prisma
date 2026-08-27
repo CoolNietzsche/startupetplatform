@@ -1,0 +1,188 @@
+model Role {
+  id          String       @id @default(cuid())
+  name        String       @unique
+  description String?
+  createdAt   DateTime     @default(now())
+  updatedAt   DateTime     @updatedAt
+  permissions Permission[] @relation("RoleToPermission")
+  users       User[]       @relation("RoleToUser")
+
+  @@schema("user")
+}
+
+model Permission {
+  id          String   @id @default(cuid())
+  code        String   @unique
+  name        String
+  description String?
+  category    String?
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  roles       Role[]   @relation("RoleToPermission")
+
+  @@index([code])
+  @@map("PermissionRecord")
+  @@schema("user")
+}
+
+model User {
+  id                           String                           @id @default(cuid())
+  email                        String                           @unique
+  twoStepAuthEnabled           Boolean                          @default(false)
+  firstName                    String
+  lastName                     String
+  password                     String
+  role                         UserRole                         @default(USER)
+  customPermissions            Json?
+  address                      String?
+  phoneNumber                  String?
+  image                        String?
+  dateOfBirth                  DateTime?
+  onboardingCompleted          Boolean                          @default(false)
+  isSuspended                  Boolean                          @default(false)
+  deletedAt                    DateTime?
+  createdAt                    DateTime                         @default(now())
+  updatedAt                    DateTime                         @updatedAt
+  emailVerified                Boolean?
+  stakeholderId                String?
+  lockedUntil                  DateTime?
+  loginAttempts                Int                                @default(0)
+  reviewedApplications         Application[]                    @relation("ApplicationReviewer")
+  applications                 Application[]
+  assignmentsCreated           ApplicationCommitteeAssignment[] @relation("AssignmentAssigner")
+  documentNotes                ApplicationDocumentNote[]        @relation("UserDocumentNotes")
+  evaluations                  ApplicationEvaluation[]          @relation("UserEvaluations")
+  startup                      Startup?
+  issuedCertificates           Certificate[]                    @relation("UserIssuedCertificates")
+  committeeMemberships         CommitteeMember[]
+  conversationParticipations   ConversationParticipant[]
+  messages                     Message[]
+  assignedComplaints           Complaint[]                      @relation("AdminAssignedComplaints")
+  complaints                   Complaint[]                      @relation("UserComplaints")
+  complaintActions             ComplaintHistory[]               @relation("ComplaintActionLogs")
+  reviewedEcoApplications      EcoApplication[]                 @relation("EcoApplicationReviewer")
+  ecoStatusChanges             EcoApplicationStatusHistory[]    @relation("EcoStatusChangedBy")
+  ecoAssignments               EcoCommitteeAssignment[]         @relation("EcoAssignmentAssignedBy")
+  ecosystemBuilderApplications EcosystemBuilder?
+  uploadedFiles                File[]                           @relation("UserUploadedFiles")
+  fileAccessLogs               FileAccessLog[]                  @relation("UserFileAccessLogs")
+  uploadedFileVersions         FileVersion[]                    @relation("UserUploadedFileVersions")
+  fundingApplications          FundingApplication[]
+  opportunityViews             OpportunityView[]
+  pitches                      Pitch[]
+  savedOpportunities           SavedOpportunity[]
+  notifications                Notification[]
+  notificationPrefs            NotificationPreferences?
+  stakeholder                  Stakeholder?                     @relation("StakeholderToAdmins", fields: [stakeholderId], references: [id])
+  managedHub                   Hub?                             @relation("HubManager", fields: [managedHubId], references: [id])
+  managedHubId                 String?                           @unique
+  mentorStartups               Startup[]                        @relation("MentorToStartups")
+  mentorAssignments            MentorAssignment[]
+  mentorSessions               MentorSession[]
+  mentorMatchRequests          MentorMatchRequest[]
+  hubMemberships               Hub[]                            @relation("HubMembers")
+  auditLogs                    AuditLog[]
+  passwordHistory              PasswordHistory[]
+  emailChangeRequests          EmailChangeRequest[]
+  emailChangeReviews           EmailChangeRequest[]             @relation("EmailChangeReviewer")
+  appealResponses              Appeal[]                         @relation("AppealResponder")
+  sessions                     UserSession[]
+  exportLogs                   ExportLog[]
+  roles                        Role[]                           @relation("RoleToUser")
+  reportSubmissions            ReportSubmission[]
+
+  @@index([email])
+  @@index([role])
+  @@index([firstName])
+  @@index([lastName])
+  @@index([phoneNumber])
+  @@index([deletedAt])
+  @@index([managedHubId])
+  @@schema("user")
+}
+
+model VerificationToken {
+  token     String   @unique
+  expires   DateTime
+  createdAt DateTime @default(now())
+  email     String
+  id        String   @id @default(cuid())
+
+  @@unique([email, token])
+  @@schema("user")
+}
+
+model PasswordResetToken {
+  id        String   @id @default(cuid())
+  email     String
+  token     String   @unique
+  expires   DateTime
+  createdAt DateTime @default(now())
+
+  @@unique([email, token])
+  @@schema("user")
+}
+
+model PasswordHistory {
+  id        String   @id @default(cuid())
+  userId    String
+  password  String
+  createdAt DateTime @default(now())
+
+  user User @relation(fields: [userId], references: [id])
+
+  @@index([userId])
+  @@schema("user")
+}
+
+model EmailChangeRequest {
+  id        String   @id @default(cuid())
+  userId    String
+  newEmail  String
+  token     String   @unique
+  status    String   @default("PENDING")
+  createdAt DateTime @default(now())
+  expiresAt DateTime
+  reviewedAt DateTime?
+  reviewedById String?
+  reason    String?
+
+  user      User  @relation(fields: [userId], references: [id])
+  reviewedBy User? @relation("EmailChangeReviewer", fields: [reviewedById], references: [id])
+
+  @@index([userId])
+  @@index([status])
+  @@schema("user")
+}
+
+model UserSession {
+  id           String   @id @default(cuid())
+  userId       String
+  token        String   @unique
+  userAgent    String?
+  ipAddress    String?
+  isActive     Boolean  @default(true)
+  lastActiveAt DateTime @default(now())
+  createdAt    DateTime @default(now())
+
+  user User @relation(fields: [userId], references: [id])
+
+  @@index([userId])
+  @@index([token])
+  @@schema("user")
+}
+
+enum UserRole {
+  SUPER_ADMIN
+  ADMIN
+  REGIONAL_ADMIN
+  HUB_MANAGER
+  MENTOR
+  COMMITTEE
+  ECOSYSTEM_BUILDER
+  REVIEWER
+  USER
+  STAKEHOLDER
+
+  @@schema("user")
+}

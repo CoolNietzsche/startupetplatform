@@ -1,0 +1,10 @@
+generator client {
+  provider        = "prisma-client-js"
+  previewFeatures = ["multiSchema", "prismaSchemaFolder"]
+  engineType      = "library"
+}
+
+datasource db {
+  provider = "postgresql"
+  schemas  = ["application", "audit", "booking", "certificate", "committee", "communication", "complaint", "directive", "ecosystem", "event", "file", "funding", "incubation", "news", "notification", "public", "user"]
+}

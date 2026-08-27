@@ -1,0 +1,29 @@
+model FormalRequest {
+  id                    String              @id @default(cuid())
+  subject               String
+  body                  String
+  status                FormalRequestStatus @default(PENDING)
+  rejectionReason       String?
+  senderId              String              // Startup ID
+  recipientStakeholderId String              // Stakeholder ID
+  attachmentFileId      String?             @unique // PDF Attachment
+  createdAt             DateTime            @default(now())
+  updatedAt             DateTime            @updatedAt
+
+  sender                Startup             @relation("StartupFormalRequests", fields: [senderId], references: [id])
+  recipient             Stakeholder         @relation("StakeholderFormalRequests", fields: [recipientStakeholderId], references: [id])
+  attachment            File?               @relation("FormalRequestAttachment", fields: [attachmentFileId], references: [id])
+
+  @@index([senderId])
+  @@index([recipientStakeholderId])
+  @@schema("communication")
+}
+
+enum FormalRequestStatus {
+  PENDING
+  ACCEPTED
+  REJECTED
+  CANCELLED
+
+  @@schema("communication")
+}

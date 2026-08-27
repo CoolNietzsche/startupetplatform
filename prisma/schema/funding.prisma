@@ -1,0 +1,192 @@
+model FundingOpportunity {
+  id                 String               @id @default(cuid())
+  title              String
+  description        String
+  organization       String
+  amount             String?
+  deadline           DateTime?
+  eligibility        Json
+  applicationUrl     String               @default("#")
+  region             Json?
+  sectors            Json?
+  viewCount          Int                  @default(0)
+  savedCount         Int                  @default(0)
+  isVerified         Boolean              @default(false)
+  isActive           Boolean              @default(true)
+  createdAt          DateTime             @default(now())
+  updatedAt          DateTime             @updatedAt
+  amountMax          Float?
+  amountMin          Float?
+  applicationProcess Json?
+  creatorId          String?
+  fundingUses        Json?
+  location           String?
+  longDescription    String?
+  status             String               @default("active")
+  category           String
+  applications       FundingApplication[]
+  creator            EcosystemBuilder?    @relation("BuilderCreatedOpportunities", fields: [creatorId], references: [id])
+  views              OpportunityView[]
+  savedBy            SavedOpportunity[]
+
+  @@index([deadline])
+  @@index([category])
+  @@index([viewCount])
+  @@index([creatorId])
+  @@schema("funding")
+}
+
+model Investor {
+  id               String            @id @default(cuid())
+  name             String
+  type             InvestorType
+  description      String?
+  logo             String?
+  website          String?
+  linkedIn         String?
+  email            String?
+  phone            String?
+  address          String?
+  investmentThesis String?
+  minTicketSize    Float?
+  maxTicketSize    Float?
+  preferredStages  Json
+  sectors          Json
+  regions          Json
+  portfolio        Json
+  isVerified       Boolean           @default(false)
+  isActive         Boolean           @default(true)
+  createdAt        DateTime          @default(now())
+  updatedAt        DateTime          @updatedAt
+  builderId        String?           @unique
+  builder          EcosystemBuilder? @relation("BuilderInvestor", fields: [builderId], references: [id])
+  pitches          Pitch[]
+
+  @@index([type])
+  @@index([isVerified])
+  @@index([isActive])
+  @@schema("funding")
+}
+
+model Pitch {
+  id           String    @id @default(cuid())
+  startupId    String
+  investorId   String
+  subject      String
+  message      String
+  attachments  Json
+  status       String    @default("PENDING")
+  response     String?
+  responseDate DateTime?
+  createdAt    DateTime  @default(now())
+  updatedAt    DateTime  @updatedAt
+  investor     Investor  @relation(fields: [investorId], references: [id])
+  startup      User      @relation(fields: [startupId], references: [id])
+
+  @@index([startupId])
+  @@index([investorId])
+  @@index([status])
+  @@schema("funding")
+}
+
+model SavedOpportunity {
+  id            String             @id @default(cuid())
+  userId        String
+  opportunityId String
+  reminderDate  DateTime?
+  notes         String?
+  createdAt     DateTime           @default(now())
+  opportunity   FundingOpportunity @relation(fields: [opportunityId], references: [id], onDelete: Cascade)
+  user          User               @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, opportunityId])
+  @@index([userId])
+  @@index([opportunityId])
+  @@schema("funding")
+}
+
+model FundingApplication {
+  id                   String             @id @default(cuid())
+  fundingOpportunityId String
+  userId               String?
+  companyName          String
+  registrationNumber   String
+  foundingDate         String
+  companySize          String
+  website              String?
+  address              String
+  city                 String
+  applicantName        String
+  email                String
+  phone                String
+  projectTitle         String
+  projectDescription   String
+  sector               String
+  impactArea           String
+  requestedAmount      Float
+  timeline             String
+  teamSize             String
+  previousFunding      String?
+  challenge            String?
+  solution             String?
+  businessPlan         String?
+  financialProjections String?
+  teamCV               String?
+  presentationDeck     String?
+  proofOfRegistration  String
+  status               String             @default("pending")
+  submittedDate        DateTime           @default(now())
+  createdAt            DateTime           @default(now())
+  updatedAt            DateTime           @updatedAt
+  opportunity          FundingOpportunity @relation(fields: [fundingOpportunityId], references: [id], onDelete: Cascade)
+  user                 User?              @relation(fields: [userId], references: [id])
+
+  @@index([fundingOpportunityId])
+  @@index([userId])
+  @@index([status])
+  @@schema("funding")
+}
+
+model OpportunityView {
+  id            String             @id @default(cuid())
+  userId        String
+  opportunityId String
+  viewedAt      DateTime           @default(now())
+  opportunity   FundingOpportunity @relation(fields: [opportunityId], references: [id], onDelete: Cascade)
+  user          User               @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+  @@index([opportunityId])
+  @@index([viewedAt])
+  @@schema("funding")
+}
+
+enum FundingCategory {
+  GRANT
+  INVESTMENT
+  ACCELERATOR
+
+  @@schema("funding")
+}
+
+enum InvestorType {
+  ANGEL
+  VC
+  CORPORATE
+  ACCELERATOR
+  GOVERNMENT
+  OTHER
+
+  @@schema("funding")
+}
+
+enum InvestmentStage {
+  SEED
+  SERIES_A
+  SERIES_B
+  SERIES_C
+  GROWTH
+  LATE_STAGE
+
+  @@schema("funding")
+}

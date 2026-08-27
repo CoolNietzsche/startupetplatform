@@ -1,0 +1,28 @@
+/* CSS for funding-related pages */
+
+/* Common styles */
+.chartContainer {
+  width: 100%;
+  height: 300px;
+  margin-bottom: 1rem;
+}
+
+/* For application page */
+.applicationContainer {
+  max-width: 800px;
+  margin: 0 auto;
+  padding: 2rem 1.5rem;
+  background-color: white;
+  border-radius: 0.5rem;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+}
+
+/* For comparison page */
+.comparisonChartContainer {
+  width: 100%;
+  height: 250px;
+  margin-bottom: 1.5rem;
+  border-radius: 0.5rem;
+  overflow: hidden;
+  background-color: white;
+}

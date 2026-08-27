@@ -1,0 +1,35 @@
+model Event {
+  id          String     @id @default(cuid())
+  title       String
+  description String
+  date        String
+  time        String
+  location    String
+  type        String
+  category    String
+  capacity    Int
+  status      String     @default("draft")
+  imageUrl    String?
+  createdAt   DateTime   @default(now())
+  updatedAt   DateTime   @updatedAt
+  attendees   Attendee[]
+
+  @@map("events")
+  @@schema("event")
+}
+
+model Attendee {
+  id            String   @id @default(cuid())
+  eventId       String
+  name          String
+  email         String
+  phone         String
+  company       String
+  registeredAt  DateTime @default(now())
+  status        String   @default("pending")
+  checkInStatus String   @default("not-checked-in")
+  event         Event    @relation(fields: [eventId], references: [id], onDelete: Cascade)
+
+  @@map("attendees")
+  @@schema("event")
+}

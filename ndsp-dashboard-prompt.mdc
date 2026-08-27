@@ -1,0 +1,80 @@
+Okay, here's a UI design prompt you can paste into v0.dev (or a similar AI-powered UI generation tool), designed to create a dashboard for the National Digital Startup Portal (NDSP), as we've discussed, along with some specific details for layout, components, and style:
+UI Design Prompt for v0.dev:
+     I want to create a dashboard for a National Digital Startup Portal (NDSP) in Ethiopia. The portal connects government agencies, entrepreneurs, ecosystem builders, and investors.
+
+**Overall Layout:**
+*   The dashboard should be **responsive** (adjusting to different screen sizes).
+*   Use a **grid-based layout** to organize widgets.
+*   Include a **sidebar navigation** for main sections and a **top navigation bar** for user profile and notifications.
+*   Use a **clean and modern design**, avoiding visual clutter.
+
+**Specific Components:**
+
+1.  **Top Navigation Bar:**
+    *   Include a logo on the left (NDSP logo).
+    *   A notification bell icon on the right (with a number indicating new notifications).
+    *   A user profile dropdown menu on the right (with user name and options for settings and log out).
+    *   A search bar on the right
+2.  **Sidebar Navigation:**
+    *   A vertical sidebar menu with icons and labels for main sections:
+        *  "Home/Overview"
+        *  "Startups"
+        *  "Ecosystem Builders"
+        *   "Funding"
+        *   "Events"
+        *   "Resources"
+        *  "Reports"
+        *   "Settings"
+    *  Use a clear, visually distinct active state for the current section
+3.  **Dashboard Content Area:**
+    *   Use a layout of 2-3 columns to arrange widgets/cards.
+    *   **Dynamic widgets/cards:** The content of these widgets will vary depending on the user type
+    *   **Examples of widgets for Startup Dashboard:**
+        *   "Application Status": display current state of the application and provide a "View Details" button.
+        *   "Funding Opportunities": Display available funding options with a "See more" button.
+        *   "My Mentors": Display profile pictures of the users mentor, with "View Mentors" button.
+        *   "Action Items": Display a list of any pending tasks for the startup user with "Submit now" button.
+        *   "Track Your Progress": display graphical representation of users' startup's metrics (revenue, customer growth, etc.)
+
+    *   **Examples of widgets for Ecosystem Builders Dashboard:**
+        *   "Pending Applications": Display count of pending applications with "Review Now" button.
+        *    "Your Registered Startups": Display count of the number of startups, with a "See More" button.
+        *   "Your Program Statistics": Display metrics such as the number of startups supported, funding raised, jobs created
+     *   "Action Items": Display a list of any pending tasks for the ecosystem builder user with "Submit now" button.
+
+    *    **Examples of widgets for Gov/Ministry personnel Dashboard:**
+        *   "Overall Ecosystem Growth": display graphical representation of metrics such as, Y% growth in startups, number of designated startups, etc
+        *  "Startup Designation Report": displays number of pending designation applications, with a "Review Now" button.
+        *  "Budget Allocation Report":  Displays graphical representation of currently disbursed grants and funds.
+    *  Use **button styles that are clear and easy to click**, use colors that align with the brand.
+    * **Use icons that are relevant to the dashboard card content.**
+
+4.  **General Style Guide:**
+    *   **Color Palette:** Use a professional color scheme (e.g., shades of blue, green, gray with accent colors for buttons/actions).  Consider colors that align with the Ethiopian flag (green, yellow, red) but use them tastefully to avoid being too loud.
+    *   **Typography:** Choose clear and readable fonts. Use consistent font sizes and styles.
+    *   **Spacing & Alignment:** Maintain consistent padding, margins, and alignment for a clean and organized feel.
+    *   **Data Visualization:** When charts are used, make them clear and easy to understand.
+    *   **Accessibility:** Ensure good color contrast and other accessibility standards are followed.
+
+5. **Dashboard Welcome Message:**
+    *Include a welcome message at the top of the page.
+
+**User-Specific Dashboards:**
+* The dashboard content should dynamically change depending on whether the logged-in user is a:
+    *   Startup
+    *   Ecosystem Builder
+    *   Ministry Personnel (admin)
+*stakeholders like Ministry of  Customs, Ministry of Revenue, Investment Commision , Addis Ababa City Adminstration, Ministry of Trade & Regional Integration, or National Bank 
+    *   General user
+
+**Prompts within the Dashboard (as previously discussed):**
+* Use the prompt examples listed before to guide the user to complete key tasks.
+
+**Important Notes:**
+*   Keep the overall design clean, intuitive, and focused on core functions.
+*   The design should reflect a professional and reliable government platform.
+*   Focus on providing at-a-glance metrics and easy navigation to key actions.
+
+**Please generate a responsive dashboard UI design for the NDSP.**
+ 
+

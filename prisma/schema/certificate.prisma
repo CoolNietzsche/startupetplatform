@@ -1,0 +1,41 @@
+model Certificate {
+  id                String            @id @default(cuid())
+  type              CertificateType   @default(STARTUP)
+  certificateNumber String?           @unique
+  filePath          String
+  qrData            String?
+  blockchainHash    String?
+  applicationId     String?           @unique
+  ecoApplicationId  String?           @unique
+  issuedById        String?
+  issuedAt          DateTime          @default(now())
+  updatedAt         DateTime          @updatedAt
+  isRenewed         Boolean           @default(false)
+  expiresAt         DateTime?
+  status            CertificateStatus @default(ACTIVE)
+  startup           Startup?          @relation("StartupToCertificate")
+  application       Application?      @relation("ApplicationToCertificate", fields: [applicationId], references: [id], onDelete: Cascade)
+  ecoApplication    EcoApplication?   @relation("EcoApplicationToCertificate", fields: [ecoApplicationId], references: [id], onDelete: Cascade)
+  issuedBy          User?             @relation("UserIssuedCertificates", fields: [issuedById], references: [id])
+
+  @@index([applicationId])
+  @@index([ecoApplicationId])
+  @@index([issuedById])
+  @@schema("certificate")
+}
+
+enum CertificateStatus {
+  ACTIVE
+  PAUSED
+  REVOKED
+  EXPIRED
+
+  @@schema("certificate")
+}
+
+enum CertificateType {
+  STARTUP
+  ECOSYSTEM
+
+  @@schema("certificate")
+}

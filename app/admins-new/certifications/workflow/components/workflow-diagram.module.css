@@ -1,0 +1,85 @@
+.diagramContainer {
+  position: relative;
+  padding-top: 10px;
+  padding-bottom: 30px;
+}
+
+.stagesContainer {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  position: relative;
+  z-index: 10;
+}
+
+.stage {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  width: 20%;
+}
+
+.circle {
+  height: 48px;
+  width: 48px;
+  border-radius: 50%;
+  border: 2px solid #e5e7eb;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 8px;
+  background-color: #f3f4f6;
+  color: #6b7280;
+}
+
+.circleActive {
+  background-color: #4f46e5;
+  border-color: #4f46e5;
+  color: white;
+}
+
+.circleComplete {
+  background-color: #ecfdf5;
+  border-color: #10b981;
+  color: #10b981;
+}
+
+.iconContainer {
+  height: 24px;
+  width: 24px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.stageName {
+  font-weight: 500;
+  font-size: 0.875rem;
+  color: #6b7280;
+}
+
+.stageNameActive {
+  color: #4f46e5;
+}
+
+.stageNameComplete {
+  color: #10b981;
+}
+
+.stageDescription {
+  font-size: 0.75rem;
+  color: #6b7280;
+  margin-top: 4px;
+  max-width: 140px;
+}
+
+.connectingLine {
+  position: absolute;
+  top: 24px;
+  left: 0;
+  right: 0;
+  height: 2px;
+  background-color: #e5e7eb;
+  z-index: 0;
+}

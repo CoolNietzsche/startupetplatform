@@ -1,0 +1,30 @@
+# StartupET Platform CODEOWNERS File
+# Learn more about CODEOWNERS: https://help.github.com/en/github/creating-cloning-and-archiving-repositories/about-code-owners
+
+# These owners will be the default owners for everything in the repo
+*       @Yesunewh
+
+# Application and certification modules
+/app/admins-new/         @Yesunewh
+/app/committee-portal/   @Yesunewh
+
+# Core dashboard features
+/app/dashboard/          @Yesunewh
+
+# Ecosystem visualization features
+/app/ecosystem/          @Yesunewh
+/components/ecosystem/   @Yesunewh
+
+# Documentation
+/docs/                   @Yesunewh
+*.md                     @Yesunewh
+
+# Configuration files
+*.json                   @Yesunewh
+*.js                     @Yesunewh
+*.ts                     @Yesunewh
+*.yml                    @Yesunewh
+
+# Database and API
+/lib/                    @Yesunewh
+/prisma/                 @Yesunewh

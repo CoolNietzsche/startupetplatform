@@ -1,0 +1,10 @@
+node_modules
+.next
+storage
+tmp
+scratch
+.vscode
+.ipynb_checkpoints
+.env
+.env.*
+!.env.example

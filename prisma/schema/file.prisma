@@ -1,0 +1,112 @@
+model File {
+  id                           String                    @id @default(cuid())
+  originalName                 String
+  storedName                   String                    @unique
+  mimeType                     String
+  size                         Int
+  storagePath                  String
+  storageBucket                String?
+  uploadedBy                   String
+  entityType                   String?
+  entityId                     String?
+  category                     FileCategory              @default(OTHER)
+  provider                     StorageProvider           @default(LOCAL)
+  metadata                     Json?
+  isPublic                     Boolean                   @default(false)
+  isDeleted                    Boolean                   @default(false)
+  deletedAt                    DateTime?
+  createdAt                    DateTime                  @default(now())
+  updatedAt                    DateTime                  @updatedAt
+  newsId                       String?
+  articlesOfIncorpApplications Application[]             @relation("ApplicationArticlesOfIncorpFile")
+  businessLicenseApplications  Application[]             @relation("ApplicationBusinessLicenseFile")
+  financialApplications        Application[]             @relation("ApplicationFinancialsFile")
+  pitchDeckApplications        Application[]             @relation("ApplicationPitchDeckFile")
+  documentNotes                ApplicationDocumentNote[] @relation("FileDocumentNotes")
+  messageAttachments           MessageAttachment[]
+  complaintAttachments         Complaint[]               @relation("ComplaintAttachment")
+  businessLicenseBuilders      EcosystemBuilder[]        @relation("EcosystemBuilderBusinessLicenseFile")
+  taxRegistrationBuilders      EcosystemBuilder[]        @relation("EcosystemBuilderTaxRegistrationFile")
+  news                         News?                     @relation("NewsImages", fields: [newsId], references: [id])
+  uploader                     User                      @relation("UserUploadedFiles", fields: [uploadedBy], references: [id])
+  accessLogs                   FileAccessLog[]
+  versions                     FileVersion[]
+  newsArticles                 News[]                    @relation("NewsFeaturedImage")
+  formalRequest                FormalRequest?            @relation("FormalRequestAttachment")
+
+  @@index([uploadedBy])
+  @@index([entityType, entityId])
+  @@index([category])
+  @@index([provider])
+  @@index([isDeleted])
+  @@index([createdAt])
+  @@schema("file")
+}
+
+model FileVersion {
+  id          String   @id @default(cuid())
+  fileId      String
+  uploadedBy  String
+  version     Int
+  storedName  String
+  storagePath String
+  size        Int
+  mimeType    String
+  metadata    Json?
+  createdAt   DateTime @default(now())
+  file        File     @relation(fields: [fileId], references: [id], onDelete: Cascade)
+  uploader    User     @relation("UserUploadedFileVersions", fields: [uploadedBy], references: [id])
+
+  @@unique([fileId, version])
+  @@index([fileId])
+  @@index([uploadedBy])
+  @@schema("file")
+}
+
+model FileAccessLog {
+  id         String         @id @default(cuid())
+  fileId     String
+  userId     String
+  action     FileAccessType
+  ipAddress  String?
+  userAgent  String?
+  accessedAt DateTime       @default(now())
+  file       File           @relation(fields: [fileId], references: [id], onDelete: Cascade)
+  user       User           @relation("UserFileAccessLogs", fields: [userId], references: [id])
+
+  @@index([fileId])
+  @@index([userId])
+  @@index([accessedAt])
+  @@schema("file")
+}
+
+enum FileCategory {
+  BUSINESS_LICENSE
+  ARTICLES_OF_INCORPORATION
+  PITCH_DECK
+  FINANCIAL_STATEMENT
+  PROFILE_IMAGE
+  CERTIFICATE
+  INVESTOR_DOCUMENT
+  TAX_REGISTRATION
+  PUBLIC_ASSET
+  OTHER
+
+  @@schema("file")
+}
+
+enum StorageProvider {
+  LOCAL
+  S3
+  VERCEL_BLOB
+
+  @@schema("file")
+}
+
+enum FileAccessType {
+  VIEW
+  DOWNLOAD
+  DELETE
+
+  @@schema("file")
+}

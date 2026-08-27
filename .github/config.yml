@@ -1,0 +1,49 @@
+# Configuration for new-issue-welcome - https://github.com/behaviorbot/new-issue-welcome
+
+# Comment to be posted to on first time issues
+newIssueWelcomeComment: >
+  Thank you for opening your first issue on the StartupET platform! 🎉 
+  Your contribution helps improve Ethiopia's startup ecosystem. A project maintainer will review this shortly.
+
+# Configuration for new-pr-welcome - https://github.com/behaviorbot/new-pr-welcome
+
+# Comment to be posted to on PRs from first time contributors
+newPRWelcomeComment: >
+  Thank you for your first pull request to the StartupET platform! 🚀
+  We appreciate your contribution to Ethiopia's digital transformation. A project maintainer will review your changes soon.
+
+# Configuration for first-pr-merge - https://github.com/behaviorbot/first-pr-merge
+
+# Comment to be posted to on pull requests merged by a first time user
+firstPRMergeComment: >
+  Congratulations on getting your first pull request merged! 🎊
+  Your code is now part of the StartupET platform, contributing to Ethiopia's startup ecosystem.
+
+# Configuration for request-info - https://github.com/behaviorbot/request-info
+
+# *Required* Comment to reply with
+requestInfoReplyComment: >
+  Thanks for your contribution! Could you please provide more information about this issue/PR?
+  This will help us understand and address your request faster.
+
+# *OPTIONAL* Label to be added to Issues and Pull Requests with insufficient information
+requestInfoLabelToAdd: needs-more-info
+
+# Configuration for sentiment-bot - https://github.com/behaviorbot/sentiment-bot
+
+# *Required* Comment to reply with
+sentimentBotReplyComment: >
+  We appreciate your passion, but please keep discussions constructive and respectful.
+  If you have concerns, we're happy to discuss them in a collaborative manner.
+
+# Settings for stale bot
+staleLabel: stale
+daysUntilStale: 60
+daysUntilClose: 7
+markComment: >
+  This issue has been automatically marked as stale because it has not had
+  recent activity. It will be closed if no further activity occurs. Thank you
+  for your contributions.
+closeComment: >
+  This issue has been automatically closed due to inactivity. Please feel free
+  to reopen it if the issue persists.

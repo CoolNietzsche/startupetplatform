@@ -1,0 +1,22 @@
+model SystemConfig {
+  id          String   @id @default(cuid())
+  key         String   @unique
+  value       Json
+  description String?
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  @@schema("public")
+}
+
+model RateLimit {
+  id        String   @id @default(cuid())
+  key       String   @unique // e.g. "login:127.0.0.1" or "upload:user_id"
+  points    Int      @default(0)
+  expireAt  DateTime
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([expireAt])
+  @@schema("public")
+}

@@ -1,0 +1,306 @@
+model Application {
+  id                     String                           @id @default(cuid())
+  userId                 String
+  reviewerId             String?
+  status                 ApplicationStatus                @default(DRAFT)
+  startupName            String?
+  numberOfEmployees      Int?
+  numberOfFounders       Int?
+  foundingDate           DateTime?
+  industry               String?
+  website                String?
+  phoneNumber            String?
+  email                  String?
+  alternateEmail         String?
+  businessLicense        String?
+  articleOfIncorporation String?
+  typeOfCompany          String?
+  totalShares            Float?
+  sharePrice             Float?
+  vision                 String?
+  mission                String?
+  productDescription     String?
+  uniqueValueProposition String?
+  tin                    String?
+  createdAt              DateTime                         @default(now())
+  updatedAt              DateTime                         @updatedAt
+  problemStatement       String?
+  solution               String?
+  innovationDescription  String?
+  targetMarket           String?
+  competitiveAdvantage   String?
+  scalabilityPlan        String?
+  traction               String?
+  riskAssessment         String?
+  revenue                String?
+  totalFundingRaised     String?
+  investmentNeeded       String?
+  useOfFunds             String?
+  fundingSources         String?
+  articlesOfIncorpFileId String?
+  businessLicenseFileId  String?
+  financialsFileId       String?
+  pitchDeckFileId        String?
+  reason                 String?
+  type                   ApplicationType                  @default(INITIAL)
+  directiveStage         String?
+  articlesOfIncorpFile   File?                            @relation("ApplicationArticlesOfIncorpFile", fields: [articlesOfIncorpFileId], references: [id])
+  businessLicenseFile    File?                            @relation("ApplicationBusinessLicenseFile", fields: [businessLicenseFileId], references: [id])
+  financialsFile         File?                            @relation("ApplicationFinancialsFile", fields: [financialsFileId], references: [id])
+  pitchDeckFile          File?                            @relation("ApplicationPitchDeckFile", fields: [pitchDeckFileId], references: [id])
+  documentVerification   Json?
+  preAssessedAt          DateTime?
+  preAssessedById        String?
+  reviewer               User?                            @relation("ApplicationReviewer", fields: [reviewerId], references: [id])
+  user                   User                             @relation(fields: [userId], references: [id])
+  assignments            ApplicationCommitteeAssignment[] @relation("ApplicationAssignments")
+  documentNotes          ApplicationDocumentNote[]        @relation("ApplicationDocumentNotes")
+  evaluations            ApplicationEvaluation[]          @relation("ApplicationEvaluations")
+  statusHistory          ApplicationStatusHistory[]
+  founders               Founder[]
+  startup                Startup?
+  certificate            Certificate?                     @relation("ApplicationToCertificate")
+  appeals                Appeal[]
+  conversations          Conversation[]
+  complaints             Complaint[]                      @relation("ApplicationComplaints")
+
+  @@index([status])
+  @@index([businessLicenseFileId])
+  @@index([articlesOfIncorpFileId])
+  @@index([pitchDeckFileId])
+  @@index([financialsFileId])
+  @@schema("application")
+}
+
+model Startup {
+  id                 String      @id @default(cuid())
+  name               String
+  applicationId      String      @unique
+  userId             String      @unique
+  level              String
+  directiveStage     String?
+  certificateId      String      @unique
+  issuedAt           DateTime    @default(now())
+  expiresAt          DateTime?
+  sector             String?
+  region             String?
+  innovationType     String?
+  createdAt          DateTime    @default(now())
+  updatedAt          DateTime    @updatedAt
+  application        Application @relation(fields: [applicationId], references: [id])
+  certificate        Certificate @relation("StartupToCertificate", fields: [certificateId], references: [id])
+  user               User        @relation(fields: [userId], references: [id])
+  complaintsReceived Complaint[] @relation("StartupTargetComplaints")
+  formalRequests     FormalRequest[] @relation("StartupFormalRequests")
+  hubId              String?
+  hub                Hub?            @relation(fields: [hubId], references: [id])
+  mentorId           String?
+  mentor             User?           @relation("MentorToStartups", fields: [mentorId], references: [id])
+  mentorSessions     MentorSession[]
+  assetBookings      AssetBooking[]
+  mentorMatchRequests MentorMatchRequest[]
+
+  @@index([hubId])
+  @@index([mentorId])
+  @@index([sector])
+  @@index([region])
+  @@schema("application")
+}
+
+model ApplicationStatusHistory {
+  id            String            @id @default(cuid())
+  applicationId String
+  status        ApplicationStatus
+  comment       String?
+  createdAt     DateTime          @default(now())
+  application   Application       @relation(fields: [applicationId], references: [id])
+
+  @@index([applicationId])
+  @@schema("application")
+}
+
+model Founder {
+  id            String      @id @default(cuid())
+  applicationId String
+  fullName      String
+  fcn           String?
+  noOfShares    Float?
+  createdAt     DateTime    @default(now())
+  updatedAt     DateTime    @updatedAt
+  email         String?
+  phone         String?
+  role          String?
+  application   Application @relation(fields: [applicationId], references: [id])
+
+  @@index([applicationId])
+  @@schema("application")
+}
+
+model ApplicationCommitteeAssignment {
+  id            String                          @id @default(cuid())
+  applicationId String
+  committeeId   String
+  status        AssignmentStatus                @default(ASSIGNED)
+  assignedById  String?
+  assignedAt    DateTime                        @default(now())
+  scheduledAt   DateTime?
+  meetingLink   String?
+  location      String?
+  notes         String?
+  createdAt     DateTime                        @default(now())
+  updatedAt     DateTime                        @updatedAt
+  chairMemberId String?
+  application   Application                     @relation("ApplicationAssignments", fields: [applicationId], references: [id])
+  assignedBy    User?                           @relation("AssignmentAssigner", fields: [assignedById], references: [id])
+  chairMember   CommitteeMember?                @relation("ApplicationAssignmentChairMembers", fields: [chairMemberId], references: [id])
+  committee     Committee                       @relation("CommitteeAssignments", fields: [committeeId], references: [id], onDelete: Cascade)
+  evaluations   ApplicationEvaluation[]
+  aggregate     ApplicationEvaluationAggregate?
+
+  @@index([applicationId])
+  @@index([committeeId])
+  @@index([status])
+  @@schema("application")
+}
+
+model ApplicationEvaluation {
+  id             String                         @id @default(cuid())
+  assignmentId   String
+  applicationId  String
+  committeeId    String
+  evaluatorId    String
+  status         EvaluationStatus               @default(DRAFT)
+  overallComment String?
+  recommendation String?
+  totalScore     Float?
+  submittedAt    DateTime?
+  createdAt      DateTime                       @default(now())
+  updatedAt      DateTime                       @updatedAt
+  application    Application                    @relation("ApplicationEvaluations", fields: [applicationId], references: [id])
+  assignment     ApplicationCommitteeAssignment @relation(fields: [assignmentId], references: [id], onDelete: Cascade)
+  committee      Committee                      @relation("CommitteeEvaluations", fields: [committeeId], references: [id], onDelete: Cascade)
+  evaluator      User                           @relation("UserEvaluations", fields: [evaluatorId], references: [id], onDelete: Cascade)
+  scores         ApplicationEvaluationScore[]
+
+  @@unique([assignmentId, evaluatorId])
+  @@index([applicationId])
+  @@index([committeeId])
+  @@schema("application")
+}
+
+model ApplicationEvaluationScore {
+  id             String                @id @default(cuid())
+  evaluationId   String
+  criterionId    String
+  score          Int
+  weightSnapshot Int
+  comment        String?
+  createdAt      DateTime              @default(now())
+  updatedAt      DateTime              @updatedAt
+  criterion      CommitteeCriterion    @relation("CriterionScores", fields: [criterionId], references: [id], onDelete: Cascade)
+  evaluation     ApplicationEvaluation @relation(fields: [evaluationId], references: [id], onDelete: Cascade)
+
+  @@unique([evaluationId, criterionId])
+  @@index([criterionId])
+  @@schema("application")
+}
+
+model ApplicationEvaluationAggregate {
+  id           String                         @id @default(cuid())
+  assignmentId String                         @unique
+  totalScore   Float
+  result       EvaluationResult
+  computedAt   DateTime                       @default(now())
+  assignment   ApplicationCommitteeAssignment @relation(fields: [assignmentId], references: [id], onDelete: Cascade)
+
+  @@schema("application")
+}
+
+model ApplicationDocumentNote {
+  id            String      @id @default(cuid())
+  applicationId String
+  evaluatorId   String
+  fileId        String?
+  category      String
+  note          String
+  createdAt     DateTime    @default(now())
+  application   Application @relation("ApplicationDocumentNotes", fields: [applicationId], references: [id], onDelete: Cascade)
+  evaluator     User        @relation("UserDocumentNotes", fields: [evaluatorId], references: [id], onDelete: Cascade)
+  file          File?       @relation("FileDocumentNotes", fields: [fileId], references: [id])
+
+  @@index([applicationId])
+  @@index([evaluatorId])
+  @@index([fileId])
+  @@schema("application")
+}
+
+enum ApplicationStatus {
+  DRAFT
+  PENDING
+  UNDER_REVIEW
+  REVIEWED
+  ASSIGNED_TO_COMMITTEE
+  IN_COMMITTEE_REVIEW
+  COMMITTEE_REVIEW_SUBMITTED
+  CERTIFIED
+  REJECTED
+  ROLLED_BACK
+  CLARIFICATION_REQUESTED
+  PAUSED
+  EXPIRED
+  SUSPENDED
+  REVOKED
+
+  @@schema("application")
+}
+
+enum ApplicationType {
+  INITIAL
+  RENEWAL
+  AMENDMENT
+
+  @@schema("application")
+}
+
+enum AssignmentStatus {
+  ASSIGNED
+  SCHEDULED
+  IN_PROGRESS
+  COMPLETED
+  CANCELLED
+
+  @@schema("application")
+}
+
+enum EvaluationStatus {
+  DRAFT
+  SUBMITTED
+
+  @@schema("application")
+}
+
+model Appeal {
+  id            String   @id @default(cuid())
+  applicationId String
+  reason        String
+  details       String?
+  status        String   @default("PENDING")
+  response      String?
+  respondedById String?
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+
+  application Application @relation(fields: [applicationId], references: [id])
+  respondedBy User?       @relation("AppealResponder", fields: [respondedById], references: [id])
+
+  @@index([applicationId])
+  @@index([status])
+  @@schema("application")
+}
+
+enum EvaluationResult {
+  PASSED
+  FAILED
+
+  @@schema("application")
+}
