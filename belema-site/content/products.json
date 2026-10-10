@@ -1,0 +1,27 @@
+{
+  "products": [
+    { "id": "2l", "size": "2 L", "useKey": "fine.uses.2l", "packKey": "fine.packNeutral" },
+    { "id": "1l", "size": "1 L", "useKey": "fine.uses.1l", "packKey": "fine.packNeutral" },
+    { "id": "600ml", "size": "600 ml", "useKey": "fine.uses.600ml", "packKey": "fine.packNeutral" },
+    { "id": "350ml", "size": "350 ml", "useKey": "fine.uses.350ml", "packKey": "fine.packNeutral" }
+  ],
+  "analysis": {
+    "unit": "mg/L",
+    "status": "provisional-current-label-values",
+    "mustVerifyAgainstLatestLabReport": true,
+    "values": [
+      { "nameKey": "fine.analysis.calcium", "value": "2" },
+      { "nameKey": "fine.analysis.magnesium", "value": "1" },
+      { "nameKey": "fine.analysis.potassium", "value": "0.8" },
+      { "nameKey": "fine.analysis.sodium", "value": "0.5" },
+      { "nameKey": "fine.analysis.bicarbonates", "value": "10" },
+      { "nameKey": "fine.analysis.sulphate", "value": "0.05" },
+      { "nameKey": "fine.analysis.fluoride", "value": "<0.01" },
+      { "nameKey": "fine.analysis.chloride", "value": "0.75" },
+      { "nameKey": "fine.analysis.iron", "value": "<0.01" },
+      { "nameKey": "fine.analysis.totalAlkalinity", "value": "20" },
+      { "nameKey": "fine.analysis.tds", "value": "10" },
+      { "nameKey": "fine.analysis.ph", "value": "7" }
+    ]
+  }
+}
